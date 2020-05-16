@@ -2,34 +2,63 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, Button, Alert, ScrollView, Dimensions, TouchableOpacity } from 'react-native'
 const DimensionsWindowWidth = Dimensions.get("window").width;
 import { Table, Row, Rows, Col, Cols, TableWrapper } from 'react-native-table-component';
+import DateTimePicker from '@react-native-community/datetimepicker'
+import { getEvents, reserveEvent } from './services/eventService'
 
 export default function App() {
   const [events, setEvents] = useState([])
-
+  const [tableData, setTableData] = useState([])
+  const [date, setDate] = useState(new Date());
+  const [show, setShow] = useState(false);
   const tableHead = ['Court 1', 'Court 2', 'Court 3', 'Court 4', 'Court 5', 'Court 6']
   const widthArr = [160, 160, 160, 160, 160, 160]
 
   useEffect(() => {
-    getEvents('tennis')
-    console.log(DimensionsWindowWidth)
-  }, [])
+    getEvents(date)
+    .then((data) => {
+      setEvents(data) 
+    })
+  }, [date])
 
-  const getEvents = type => {
-    const baseUrl = 'http://dev.api.northly.fi/reservations'
-    const today = new Date().toISOString().split('T')[0]
-    const url = `${baseUrl}?date=${today}&type=${type}`
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
-        setEvents(data)
-      })
-      .catch((error) => {
-        Alert.alert('Error', error);
-      })
-  }
+  useEffect(() => {
+    updateTable(events)
+  }, [events])
 
   const handleReserveButtonClick = event => {
     console.log('Reserve event:', event.id)
+    reserveEvent(event.id)
+      .then((response) => {
+        console.log(response)
+        events.find(event => event.id === response.id).status = response.status
+        updateTable(events)
+      })
+  }
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === 'ios');
+    setDate(currentDate)
+    console.log(currentDate.toLocaleDateString('fi-FI'))
+  }
+
+  const showDatepicker = () => {
+    setShow(true)
+  }
+
+  const updateTable = (events) => {
+    const tableData = [];
+    if(events.length > 0) {
+      for (let i = 1; i <= 6; i++) {
+        let columndata = []
+        events.forEach(event => {
+          if (Number(event.courtId) === i) {
+            columndata.push(renderButton(event))
+          }
+        })
+        tableData.push(columndata)
+      }
+    }
+    setTableData(tableData)
   }
 
   const renderButton = (event) => (
@@ -37,6 +66,7 @@ export default function App() {
       <Text style={styles.text}>Court ID: {event.courtId}</Text>
       <Text style={styles.text}>Start: {event.start}</Text>
       <Text style={styles.text}>End: {event.end}</Text>
+      <Text style={styles.text}>Status: {event.status}</Text>
       <TouchableOpacity onPress={() => handleReserveButtonClick(event)}>
         <View style={styles.btn}>
           <Text style={styles.btnText}>Reserve</Text>
@@ -44,19 +74,6 @@ export default function App() {
       </TouchableOpacity>
     </View>
   )
-
-  const tableData = [];
-
-  for (let i = 1; i <= 6; i++) {
-    let columndata = []
-    events.forEach(event => {
-      if (Number(event.courtId) === i) {
-        columndata.push(renderButton(event))
-      }
-    })
-    tableData.push(columndata)
-  }
-
 
   return (
     <View style={styles.container}>
@@ -74,9 +91,22 @@ export default function App() {
           </ScrollView>
         </View>
       </ScrollView>
+      {show && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          timeZoneOffsetInMinutes={0}
+          value={date}
+          mode={'date'}
+          is24Hour={true}
+          display="default"
+          onChange={onChange} 
+        />
+      )}
+      <Button title={date.toLocaleDateString('fi-FI')} onPress={showDatepicker}></Button>  
     </View>
   )
 }
+
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
   header: { height: 50, backgroundColor: '#10a300' },
