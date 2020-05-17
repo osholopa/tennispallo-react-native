@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, Button, Dimensions, } from 'react-native'
+import {  Button, } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 
 export default function Datepicker(props) {

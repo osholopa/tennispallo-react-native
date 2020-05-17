@@ -32,7 +32,7 @@ export default function App() {
           options={{
             headerStyle: {
               backgroundColor: 'black',
-            }, headerTitle: (navigationRef) => <NavigationBar />
+            }, headerTitle: () => <NavigationBar />
           }}
         />
         <Stack.Screen name="Käyttäjäsivu" component={UserPage}
