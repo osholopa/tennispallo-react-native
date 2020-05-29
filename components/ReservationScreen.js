@@ -28,7 +28,6 @@ export default function ReservationScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    padding: 16, 
-    paddingTop: 30, 
+    padding: 0,
     backgroundColor: 'black' }
 })

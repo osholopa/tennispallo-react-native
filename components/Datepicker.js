@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {  Button, } from 'react-native'
+import {  Button, Platform, View } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 
 export default function Datepicker(props) {
@@ -13,13 +13,15 @@ export default function Datepicker(props) {
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
-    setShow(Platform.OS === 'ios');
+    if(Platform.OS === 'ios') {
+      setShow(false)
+    }
     setDate(currentDate)
     console.log(currentDate.toLocaleDateString('fi-FI'))
   }
 
   return (
-    <>
+    <View>
       {show && (
         <DateTimePicker
           testID="dateTimePicker"
@@ -29,9 +31,10 @@ export default function Datepicker(props) {
           is24Hour={true}
           display="spinner"
           onChange={onChange}
+          style={{width: '100%', backgroundColor: 'white'}}
         />
       )}
       <Button color={'#32a852'} title={date.toLocaleDateString('fi-FI')} onPress={showDatepicker}></Button>
-    </>
+    </View>
   )
 }
