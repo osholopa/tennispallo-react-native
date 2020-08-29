@@ -7,17 +7,27 @@ import { AntDesign } from '@expo/vector-icons'
 import ReservationScreen from './components/ReservationScreen'
 import UserPage from './components/UserPage'
 import InfoPage from './components/InfoPage'
+import LoginPage from './components/LoginPage'
 
 export default function App() {
-
   const Stack = createStackNavigator()
 
   const NavigationBar = () => {
     return (
       <View style={styles.navigationBar}>
-        <AntDesign onPress={() => navigationRef.current?.navigate("Infosivu")} name="infocirlceo" size={24} color="white" />
+        <AntDesign
+          onPress={() => navigationRef.current?.navigate('Infosivu')}
+          name="infocirlceo"
+          size={24}
+          color="white"
+        />
         <Text style={styles.navigationHeader}>Varauskalenteri</Text>
-        <AntDesign onPress={() => navigationRef.current?.navigate("Käyttäjäsivu")} name="user" size={24} color="white" />
+        <AntDesign
+          onPress={() => navigationRef.current?.navigate('Käyttäjäsivu')}
+          name="user"
+          size={24}
+          color="white"
+        />
       </View>
     )
   }
@@ -26,27 +36,49 @@ export default function App() {
 
   return (
     <NavigationContainer ref={navigationRef} style={styles.container}>
-      <Stack.Navigator initialRouteName="ReservationScreen">
-        <Stack.Screen name="Varauskalenteri"
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Kirjautumissivu"
+          component={LoginPage}
+          options={{
+            headerStyle: {
+              backgroundColor: 'black',
+            },
+            headerLeft: null,
+            headerTintColor: '#fff',
+          }}
+        />
+        <Stack.Screen
+          name="Varauskalenteri"
           component={ReservationScreen}
           options={{
             headerStyle: {
               backgroundColor: 'black',
-            }, headerTitle: () => <NavigationBar />
+            },
+            headerLeft: null,
+            headerTitle: () => <NavigationBar />,
           }}
         />
-        <Stack.Screen name="Käyttäjäsivu" component={UserPage}
+        <Stack.Screen
+          name="Käyttäjäsivu"
+          component={UserPage}
           options={{
             headerStyle: {
               backgroundColor: 'black',
-            }, headerTintColor: '#fff'
-          }} />
-          <Stack.Screen name="Infosivu" component={InfoPage}
+            },
+            headerTintColor: '#fff',
+          }}
+        />
+        <Stack.Screen
+          name="Infosivu"
+          component={InfoPage}
           options={{
             headerStyle: {
               backgroundColor: 'black',
-            }, headerTintColor: '#fff'
-          }} />
+            },
+            headerTintColor: '#fff',
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   )
@@ -54,7 +86,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   navigationBar: {
     height: 100,
@@ -65,6 +97,6 @@ const styles = StyleSheet.create({
   },
   navigationHeader: {
     color: 'white',
-    fontSize: 24
-  }
+    fontSize: 24,
+  },
 })
